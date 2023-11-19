@@ -48,11 +48,13 @@ class TodoManager:
         for todo in self.todo_list:
             if todo.get_id() == id:
                 todo.set_status(TodoStatus.COMPLETED)
+                break
 
     def remove_todo(self, id: int):
         for todo in self.todo_list:
             if todo.get_id() == id:
                 self.todo_list.remove(todo)
+                break
 
     def print_todo_list(self):
         if len(self.todo_list) == 0:
