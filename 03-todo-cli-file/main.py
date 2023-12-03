@@ -30,11 +30,11 @@ def main():
                     content = input("Content: ")
                     todo_manager.add_todo(title=title, content=content)
                 case 3:
-                    id = int(input("Enter the ID you want to complete: "))
-                    todo_manager.complete_todo(id)
+                    id_ = input("Enter the ID you want to complete: ")
+                    todo_manager.complete_todo(id_)
                 case 4:
-                    id = int(input("Enter the ID you want to remove: "))
-                    todo_manager.remove_todo(id)
+                    id_ = input("Enter the ID you want to remove: ")
+                    todo_manager.remove_todo(id_)
                 case 5:
                     sys.exit(0)
                 case _:
