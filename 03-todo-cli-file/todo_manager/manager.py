@@ -1,6 +1,6 @@
+import pickle
 import uuid
 from enum import Enum
-
 
 class TodoStatus(Enum):
     COMPLETED = "completed"
@@ -22,24 +22,20 @@ class TodoManager:
     def __init__(self):
         self.todo_list: dict[str, Todo] = {}
         self._file_path = "./todo-list.txt"
-        self._file_delimiter = "|"
         self.load_from_file()
 
     def gen_id(self):
         return str(uuid.uuid4())
     
     def write_to_file(self):
-        with open(self._file_path, "w") as f:
-            for todo in self.todo_list.values():
-                f.write(self._file_delimiter.join([todo.id_, todo.title, todo.content, todo.status]) + "\n")
+        with open(self._file_path, "wb") as f:
+            pickle.dump(self.todo_list, f)
 
     def load_from_file(self):
         try:
-            with open(self._file_path, "r") as f:
-                todos = f.readlines()
-                for todo in todos:
-                    id_, title, content, status = todo.strip().split(self._file_delimiter)
-                    self.todo_list[id_] = Todo(id_=id_, title=title, content=content, status=status)
+            with open(self._file_path, "rb") as f:
+                todo_list = pickle.load(f)
+                self.todo_list = todo_list
         except FileNotFoundError:
             open(self._file_path, "w")
 
