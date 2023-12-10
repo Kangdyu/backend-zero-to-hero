@@ -56,8 +56,8 @@ class TodoManager:
         self.write_to_file()
 
     def complete_todo(self, id_: str):
-        if id_ in self.todo_list:
-            self.todo_list[id_].status = TodoStatus.COMPLETED.value
+        if (todo := self.todo_list.get(id_)) is not None:
+            todo.status = TodoStatus.COMPLETED.value
             self.write_to_file()
         else:
             print(f"There is no todo whose id is {id_}")
