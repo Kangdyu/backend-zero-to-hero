@@ -31,7 +31,7 @@ class TodoManager:
     def write_to_file(self):
         with open(self._file_path, "w") as f:
             for todo in self.todo_list.values():
-                f.write(f"{todo.id_}{self._file_delimiter}{todo.title}{self._file_delimiter}{todo.content}{self._file_delimiter}{todo.status}\n")
+                f.write(self._file_delimiter.join([todo.id_, todo.title, todo.content, todo.status]) + "\n")
 
     def load_from_file(self):
         try:
