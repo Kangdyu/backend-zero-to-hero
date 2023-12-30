@@ -1,5 +1,6 @@
 from typing import Generic, TypeVar
 
+from exceptions import EmptyUpdateBodyException, NotFoundException
 from fastapi import FastAPI, Response
 from pydantic import BaseModel
 from schemas import Todo, TodoCreate, TodoUpdate
@@ -29,11 +30,17 @@ def add_todo(todo: TodoCreate):
 
 @app.patch("/todos/{tid}")
 def update_todo(tid: str, todo: TodoUpdate):
-    todo_manager.update_todo(tid=tid, todo=todo)
-    return Response(status_code=204)
+    try:
+        todo_manager.update_todo(tid=tid, todo=todo)
+        return Response(status_code=204)
+    except EmptyUpdateBodyException:
+        return Response(status_code=400, content="Empty Update Body")
 
 
 @app.delete("/todos/{tid}")
 def delete_todo(tid: str):
-    todo_manager.delete_todo(tid=tid)
-    return Response(status_code=204)
+    try:
+        todo_manager.delete_todo(tid=tid)
+        return Response(status_code=204)
+    except NotFoundException:
+        return Response(status_code=404, content=f"There is no todo whose id is {tid}")

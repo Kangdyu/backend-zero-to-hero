@@ -2,6 +2,7 @@ import sqlite3
 import uuid
 
 from constants import TodoStatus
+from exceptions import EmptyUpdateBodyException, NotFoundException
 from schemas import Todo, TodoCreate, TodoUpdate
 
 
@@ -55,6 +56,9 @@ class TodoManager:
             set_list.append("status")
             set_value_dict["status"] = status.value
 
+        if len(set_list) == 0:
+            raise EmptyUpdateBodyException
+
         set_clause = ", ".join([f"{column} = :{column}" for column in set_list])
 
         query = f"UPDATE todos SET {set_clause} WHERE id = :id"
@@ -66,7 +70,11 @@ class TodoManager:
         self.connection.commit()
 
     def delete_todo(self, tid: str):
-        self.cursor.execute("DELETE FROM todos WHERE id=:id", {"id": tid})
+        result = self.cursor.execute("DELETE FROM todos WHERE id=:id", {"id": tid})
+
+        if result.rowcount == 0:
+            raise NotFoundException
+
         self.connection.commit()
 
     def get_todo_list(self) -> list[Todo]:
