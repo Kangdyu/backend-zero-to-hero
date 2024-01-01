@@ -23,15 +23,17 @@ def get_todo_list() -> ResponseContent[list[Todo]]:
 
 @app.post("/todos")
 def add_todo(todo: TodoCreate):
-    todo_manager.add_todo(todo)
-    return Response(status_code=201)
+    result = todo_manager.add_todo(todo)
+    return Response(
+        status_code=201, content=ResponseContent(data=result).model_dump_json()
+    )
 
 
 @app.patch("/todos/{tid}")
 def update_todo(tid: str, todo: TodoUpdate):
     try:
-        todo_manager.update_todo(tid=tid, todo=todo)
-        return Response(status_code=204)
+        result = todo_manager.update_todo(tid=tid, todo=todo)
+        return ResponseContent(data=result)
     except EmptyUpdateBodyException:
         return Response(status_code=400, content="Empty Update Body")
 

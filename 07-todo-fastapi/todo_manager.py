@@ -34,20 +34,25 @@ class TodoManager:
         )
         self.connection.commit()
 
-    def add_todo(self, todo: TodoCreate):
+    def add_todo(self, todo: TodoCreate) -> Todo:
         new_id = self.gen_id()
-        self.cursor.execute(
-            "INSERT INTO todos VALUES (:id, :title, :content, :status)",
+        result = self.cursor.execute(
+            "INSERT INTO todos VALUES (:id, :title, :content, :status) RETURNING *",
             {
                 "id": new_id,
                 "title": todo.title,
                 "content": todo.content,
                 "status": TodoStatus.IN_PROGRESS.value,
             },
-        )
+        ).fetchone()
         self.connection.commit()
 
-    def update_todo(self, tid: str, todo: TodoUpdate):
+        (tid, title, content, status) = result
+        created_todo = Todo(tid=tid, title=title, content=content, status=status)
+
+        return created_todo
+
+    def update_todo(self, tid: str, todo: TodoUpdate) -> Todo:
         set_list: list[str] = []
         set_value_dict = {"id": tid}
 
@@ -68,13 +73,17 @@ class TodoManager:
 
         set_clause = ", ".join([f"{column} = :{column}" for column in set_list])
 
-        query = f"UPDATE todos SET {set_clause} WHERE id = :id"
-
-        self.cursor.execute(
+        query = f"UPDATE todos SET {set_clause} WHERE id = :id RETURNING *"
+        result = self.cursor.execute(
             query,
             set_value_dict,
-        )
+        ).fetchone()
         self.connection.commit()
+
+        (tid, title, content, status) = result
+        updated_todo = Todo(tid=tid, title=title, content=content, status=status)
+
+        return updated_todo
 
     def delete_todo(self, tid: str):
         result = self.cursor.execute("DELETE FROM todos WHERE id=:id", {"id": tid})
