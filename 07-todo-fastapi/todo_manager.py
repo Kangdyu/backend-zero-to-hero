@@ -2,8 +2,15 @@ import sqlite3
 import uuid
 
 from constants import TodoStatus
-from exceptions import EmptyUpdateBodyException, NotFoundException
 from schemas import Todo, TodoCreate, TodoUpdate
+
+
+class EmptyUpdateBodyException(Exception):
+    pass
+
+
+class NotFoundException(Exception):
+    pass
 
 
 class TodoManager:

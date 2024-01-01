@@ -1,10 +1,9 @@
 from typing import Generic, TypeVar
 
-from exceptions import EmptyUpdateBodyException, NotFoundException
 from fastapi import FastAPI, Response
 from pydantic import BaseModel
 from schemas import Todo, TodoCreate, TodoUpdate
-from todo_manager import TodoManager
+from todo_manager import EmptyUpdateBodyException, NotFoundException, TodoManager
 
 app = FastAPI()
 todo_manager = TodoManager()
