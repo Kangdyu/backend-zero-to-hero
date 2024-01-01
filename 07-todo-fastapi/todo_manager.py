@@ -54,7 +54,7 @@ class TodoManager:
 
         if (status := todo.status) is not None:
             set_list.append("status")
-            set_value_dict["status"] = status.value
+            set_value_dict["status"] = status
 
         if len(set_list) == 0:
             raise EmptyUpdateBodyException

@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class TodoStatus(Enum):
+class TodoStatus(str, Enum):
     COMPLETED = "completed"
     IN_PROGRESS = "in-progress"
