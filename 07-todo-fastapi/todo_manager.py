@@ -2,11 +2,7 @@ import sqlite3
 import uuid
 
 from constants import TodoStatus
-from schemas import Todo, TodoCreate, TodoUpdate
-
-
-class EmptyUpdateBodyException(Exception):
-    pass
+from schemas import EmptyUpdateBodyException, Todo, TodoCreate, TodoUpdate
 
 
 class NotFoundException(Exception):
@@ -67,9 +63,6 @@ class TodoManager:
         if (status := todo.status) is not None:
             set_list.append("status")
             set_value_dict["status"] = status
-
-        if len(set_list) == 0:
-            raise EmptyUpdateBodyException
 
         set_clause = ", ".join([f"{column} = :{column}" for column in set_list])
 

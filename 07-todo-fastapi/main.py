@@ -1,8 +1,8 @@
 from typing import Generic, TypeVar
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel
-from schemas import Todo, TodoCreate, TodoUpdate
+from schemas import EmptyUpdateBodyException, Todo, TodoCreate, TodoUpdate
 from todo_manager import EmptyUpdateBodyException, NotFoundException, TodoManager
 
 app = FastAPI()
@@ -13,6 +13,13 @@ DataT = TypeVar("DataT")
 
 class ResponseContent(BaseModel, Generic[DataT]):
     data: DataT
+
+
+@app.exception_handler(EmptyUpdateBodyException)
+def empty_update_body_exception_handler(
+    request: Request, exc: EmptyUpdateBodyException
+):
+    return Response(status_code=400, content="Empty Update Body")
 
 
 @app.get("/todos")
@@ -31,11 +38,8 @@ def add_todo(todo: TodoCreate):
 
 @app.patch("/todos/{tid}")
 def update_todo(tid: str, todo: TodoUpdate):
-    try:
-        result = todo_manager.update_todo(tid=tid, todo=todo)
-        return ResponseContent(data=result)
-    except EmptyUpdateBodyException:
-        return Response(status_code=400, content="Empty Update Body")
+    result = todo_manager.update_todo(tid=tid, todo=todo)
+    return ResponseContent(data=result)
 
 
 @app.delete("/todos/{tid}")
